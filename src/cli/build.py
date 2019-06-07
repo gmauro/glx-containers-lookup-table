@@ -97,7 +97,7 @@ def implementation(logger, args):
             mulled_targets = [build_target(c.package, c.version) for c in conda_targets]
             container_name = mulled_container_name("biocontainers", mulled_targets)
         except Exception as ex:
-            logger.exception('Caught an error with tid: {}'.format(t_id))
+            logger.exception('Caught an error at {} with tid: {}'.format(args.url, t_id))
             pass
 
         singularity = 'not_found'
