@@ -107,7 +107,7 @@ def implementation(logger, args):
                 singularity = os.path.join(args.sg_local_path, os.path.basename(container_name))
                 counter_singularity += 1
 
-            match[t_id] = {'docker': container_name.replace('quay.io', 'quay.io:/'),
+            match[t_id] = {'docker': "docker://{}".format(container_name),
                            'singularity': singularity}
         unmatch.append(t_id)
         print(t_id, container_name, singularity)
