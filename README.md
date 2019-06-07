@@ -23,7 +23,7 @@ make install
 
 ## Usage
 
-To access help guide, digit:
+To access the help guide, digit:
 ```bash
 glx_container_lookup_table
 ```
