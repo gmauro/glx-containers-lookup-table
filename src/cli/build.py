@@ -97,17 +97,18 @@ def implementation(logger, args):
             mulled_targets = [build_target(c.package, c.version) for c in conda_targets]
             container_name = mulled_container_name("biocontainers", mulled_targets)
         except Exception as ex:
-            logger.exception('Caught an error')
+            logger.exception('Caught an error with tid: {}'.format(t_id))
             pass
 
-        singularity = None
+        singularity = 'not_found'
         if container_name:
             counter_docker += 1
             if os.path.basename(container_name) in list_of_files:
-                singularity = os.path.basename(container_name)
+                singularity = os.path.join(args.sg_local_path, container_name)
                 counter_singularity += 1
 
-            match[t_id] = {'docker': container_name, 'singularity': singularity}
+            match[t_id] = {'docker': container_name.replace('quay.io', 'quay.io:/'),
+                           'singularity': singularity}
         unmatch.append(t_id)
         print(t_id, container_name, singularity)
     dump(match, args.matched)
