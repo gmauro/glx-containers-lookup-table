@@ -104,7 +104,7 @@ def implementation(logger, args):
         if container_name:
             counter_docker += 1
             if os.path.basename(container_name) in list_of_files:
-                singularity = os.path.join(args.sg_local_path, container_name)
+                singularity = os.path.join(args.sg_local_path, os.path.basename(container_name))
                 counter_singularity += 1
 
             match[t_id] = {'docker': container_name.replace('quay.io', 'quay.io:/'),
