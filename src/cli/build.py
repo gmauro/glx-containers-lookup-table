@@ -111,8 +111,8 @@ def implementation(logger, args):
                            'singularity': singularity}
         unmatch.append(t_id)
         print(t_id, container_name, singularity)
-    dump(match, args.matched)
-    dump(unmatch, args.notmatched)
+    dump(match, "{}_{}".format(args.url.split('/')[2], args.matched))
+    dump(unmatch, "{}_{}".format(args.url.split('/')[2], args.notmatched))
 
     print("number of tools {}".format(len(tools)))
     print("number of docker images matched {}".format(counter_docker))
