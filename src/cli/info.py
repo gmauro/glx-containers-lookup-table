@@ -13,11 +13,11 @@ def make_parser(parser):
 def implementation(logger, args):
     print("App: {} {}\n".format(__appname__, __version__))
 
-    solida_path = {
+    src_path = {
                    'log file': log_file
                    }
     print("Paths: ")
-    for k, v in solida_path.items():
+    for k, v in src_path.items():
         print("  {}: {}".format(k, v))
     print("\n")
 

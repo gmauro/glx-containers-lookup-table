@@ -2,6 +2,7 @@ import os
 
 from bioblend.galaxy import GalaxyInstance
 from comoda import path_exists
+from comoda.yaml import dump
 from galaxy.tools.deps.conda_util import requirements_to_conda_targets
 from galaxy.tools.deps.mulled.util import (
     build_target,
@@ -30,6 +31,12 @@ def make_parser(parser):
     parser.add_argument('-k', '--key', type=str,
                         help='Galaxy user api key',
                         required=True)
+    parser.add_argument('-m', '--matched', type=str,
+                        help='File with the list of tool id with a container match',
+                        default='matched.yaml')
+    parser.add_argument('-n', '--notmatched', type=str,
+                        help='File with the list of tool id without a container match',
+                        default='unmatched.yaml')
 
 
 def mulled_container_name(namespace, targets):
@@ -68,13 +75,15 @@ def implementation(logger, args):
         for (dirpath, dirnames, filenames) in os.walk(args.sg_local_path):
             for filename in filenames:
                 list_of_files[filename] = os.sep.join([dirpath, filename])
-        print(list_of_files)
+        logger.debug(list_of_files)
 
     gi = GalaxyInstance(args.url, key=args.key)
     tools = gi.tools.get_tools()
 
     counter_singularity = 0
     counter_docker = 0
+    match = {}
+    unmatch = []
 
     for t in tools:
         t_id = t['id']
@@ -87,8 +96,10 @@ def implementation(logger, args):
             conda_targets = requirements_to_conda_targets(requirements)
             mulled_targets = [build_target(c.package, c.version) for c in conda_targets]
             container_name = mulled_container_name("biocontainers", mulled_targets)
-        except:
+        except Exception as ex:
+            logger.exception('Caught an error')
             pass
+
         singularity = None
         if container_name:
             counter_docker += 1
@@ -96,7 +107,11 @@ def implementation(logger, args):
                 singularity = os.path.basename(container_name)
                 counter_singularity += 1
 
+            match[t_id] = {'docker': container_name, 'singularity': singularity}
+        unmatch.append(t_id)
         print(t_id, container_name, singularity)
+    dump(match, args.matched)
+    dump(unmatch, args.notmatched)
 
     print("number of tools {}".format(len(tools)))
     print("number of docker images matched {}".format(counter_docker))
