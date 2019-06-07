@@ -102,6 +102,7 @@ def implementation(logger, args):
 
         singularity = 'not_found'
         if container_name:
+            container_name = container_name.lower()
             counter_docker += 1
             if os.path.basename(container_name) in list_of_files:
                 singularity = os.path.join(args.sg_local_path, os.path.basename(container_name))
